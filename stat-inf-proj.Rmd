@@ -1,0 +1,96 @@
+---
+title: "Statistical Inference course project"
+author: "Ben de Haan"
+date: "22 Aug 2015"
+output: pdf_document
+---
+
+--- 
+# Ben de Haan
+# Coursera Statistical Inference class 31
+# Github Benno001
+
+# In this project you will investigate the exponential distribution in R and 
+# compare it with the Central Limit Theorem. 
+# The exponential distribution can be simulated in R with rexp(n, lambda), 
+# where lambda is the rate parameter. 
+# The mean of exponential distribution is 1/lambda and 
+# the standard deviation is also 1/lambda. 
+# Set lambda = 0.2 for all of the simulations. 
+# You will investigate the distribution of averages of 40 exponentials. 
+# Note that you will need to do a thousand simulations.
+---
+
+# Introduction
+In this project, I will investigate the exponential distribution in R and compare it with the Central Limit Theorem. 
+
+Firstly, we need to set a seed to ensure reproducibility. Furthermore, for all simulations, lambda is set to 0.2. I will draw 1000 values for each iteration in the simulation
+
+```{r}
+set.seed(123465)
+lambda = 0.2
+n = 1000 # Values drawn for each iteration 
+```
+
+# Simulation
+```{r}
+means <- c() # Init vector for storing means
+variances <- c()
+# Simulate 1000 
+for (i in 1:1000){
+    values <- rexp(n, lambda) # Get n values
+    means[i] <- mean(values) # Store the mean for each iteration
+    variances[i] <- var(values) # Store the variance for each iteration
+}
+```
+
+# Data analysis
+
+## Theoretical mean vs. sample mean
+The theoretical mean of the exponential distribution is $1 / lambda$. This means that the theoretical mean is:
+
+```{r}
+theoretical.mean <- 1 / lambda
+theoretical.mean
+```
+
+The sample mean can be inferred by taking the mean from the vector of means. Its 95% confidence interval bounds can be derived by taking the 2.5% and 97.5% values from the distribution, which are upper and lower bound, respectively.
+
+```{r}
+mean.bounds <- quantile(variances, probs = c(0.025, 0.975))
+mean.lowerBound <- mean.bounds[1]
+mean.upperBound <- mean.bounds[2]
+mean.lowerBound
+mean.upperBound
+```
+
+## Theoretical variance vs. sample variance
+The theoretical standard deviation of the exponential distribution is $1 / lambda$. Since $var = sd^2$, the variance is:
+
+```{r}
+theoretical.sd <- 1 / lambda
+theoretical.var <- theoretical.sd^2
+theoretical.var
+```
+
+The sample variance can be inferred by taking the mean from the vector of variances. Its 95% confidence interval bounds can be derived by taking the 2.5% and 97.5% values from the distribution, which are upper and lower bound, respectively.
+
+```{r}
+variance.bounds <- quantile(variances, probs = c(0.025, 0.975))
+variance.lowerBound <- variance.bounds[1]
+variance.upperBound <- variance.bounds[2]
+variance.lowerBound
+variance.upperBound
+```
+
+## Distribution
+
+The means are distributed as follows:
+```{r}
+hist(means)
+```
+
+Variances are distributed as depicted by the following histogram:
+```{r}
+hist(variances)
+```
