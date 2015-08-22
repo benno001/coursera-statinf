@@ -60,6 +60,14 @@ sample.mean.lowerBound
 sample.mean.upperBound
 ```
 
+The means are distributed as follows, where the theoretical mean is indicated by the black line:
+
+```{r}
+qplot(means, binwidth = 0.25, fill=..count.., main = "Histogram of means") +
+    scale_fill_gradient("Count", low = "green", high = "red") +
+    geom_vline(xintercept=sample.mean)
+```
+
 The theoretical variance is `r theoretical.mean` and the sample variance is `r sample.mean`, which means  that there is a `r (1 - (theoretical.mean / sample.mean)) * 100`% deviation.
 
 ## Theoretical variance vs. sample variance
@@ -83,27 +91,22 @@ sample.variance.lowerBound
 sample.variance.upperBound
 ```
 
+Variances are distributed as depicted by the following histogram, where the theoretical variance is depicted by the black line:
+
+```{r, echo=FALSE}
+qplot(variances, binwidth = 1, fill=..count.., main = "Histogram of variances") + 
+    scale_fill_gradient("Count", low = "green", high = "red") +
+    geom_vline(xintercept=sample.var.mean)
+```
+
 The theoretical variance is `r theoretical.var` and the sample variance is `r sample.var.mean`, which means  that there is a `r (1 - (theoretical.var / sample.var.mean)) * 100`% deviation.
 
 ## Distribution
-
-The means are distributed as follows:
-
-```{r}
-qplot(means, binwidth = 0.25, fill=..count.., main = "Histogram of means") +
-    scale_fill_gradient("Count", low = "green", high = "red")
-```
 
 The Q-Q normality plot can grant us additional insight as to whether the means are normally distributed.
 
 ```{r}
 qqnorm(means)
-```
-
-Variances are distributed as depicted by the following histogram:
-
-```{r, echo=FALSE}
-qplot(variances, binwidth = 1, fill=..count.., main = "Histogram of variances") + scale_fill_gradient("Count", low = "green", high = "red")
 ```
 
 The Shapiro-Wilk test of normality can test the means vector for a normal distribution. The null hypothesis here is that the data are normally distributed.
@@ -116,6 +119,7 @@ shapiro.test(means)
 Since p < 0.05, the test reveals the means drawn from the Exponential distribution are not normally distributed.
 
 # Discussion
+The theoretical mean and variance are approximated by the sample mean and variance with only a slight deviation. We can see from both the sample mean and variance histograms and Q-Q plot that the distribution is right skewed. Additionally, the Shapiro-Wilk test indicates the means are not normally distributed, which is not expected since the CLT would predict so. Since it is unlikely the Central Limit Theorem is false, the test could be redone using a higher number of values drawn and/or more simulations.
 
-We can see from both the sample mean and variance histograms and Q-Q plot that the distribution is right skewed. Additionally, the Shapiro-Wilk test indicates the means are not normally distributed, which is not expected since the CLT would predict so. Since it is unlikely the Central Limit Theorem is false, the test could be redone using a higher number of values drawn and/or more simulations.
-
+# Appendix
+Since not putting the figures and code in the appendix is desirable in a knitr report, I have chosen not to.
