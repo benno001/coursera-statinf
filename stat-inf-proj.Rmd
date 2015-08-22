@@ -6,22 +6,31 @@ output: pdf_document
 ---
 
 # Introduction
-In this project, I will investigate the exponential distribution in R and compare it with the Central Limit Theorem. 
+In this project, I will investigate the exponential distribution in R and compare it with the Central Limit Theorem (CLT). The CLT states that iid variables should have a normal distribution, even if these variables are not normally distributed.
 
-Firstly, we need to set a seed to ensure reproducibility. Furthermore, for all simulations, lambda is set to 0.2. I will draw 40 values of exponentials for each iteration in the simulation.
-
+Firstly, we need to load a library for plotting:
 ```{r}
-set.seed(123465)
-lambda = 0.2
-n = 40 # Values drawn for each iteration 
+library(ggplot2)
 ```
 
-# Simulation
+Secondly, we need to set a seed to ensure reproducibility. Furthermore, for all simulations, lambda is set to 0.2. The number of iterations is 1000. I will draw 40 values of exponentials for each iteration in the simulation.
+
+```{r}
+set.seed(123456)
+lambda = 0.2
+n = 40 # Number of values drawn for each iteration
+reps = 1000 # Number of iterations
+```
+
+# Simulation code
+
+First we need to initialise two vectors for storing the means and variances, respectively. Then we can 
+
 ```{r}
 means <- c() # Init vector for storing means
-variances <- c()
-# Simulate 1000 
-for (i in 1:1000){
+variances <- c() # Init vector for storing variances
+# Simulate 1000 reps
+for (i in 1:reps){
     values <- rexp(n, lambda) # Get n values
     means[i] <- mean(values) # Store the mean for each iteration
     variances[i] <- var(values) # Store the variance for each iteration
@@ -41,12 +50,16 @@ theoretical.mean
 The sample mean can be inferred by taking the mean from the vector of means. Its 95% confidence interval bounds can be derived by taking the 2.5% and 97.5% values from the distribution, which are upper and lower bound, respectively.
 
 ```{r}
-mean.bounds <- quantile(variances, probs = c(0.025, 0.975))
-mean.lowerBound <- mean.bounds[1]
-mean.upperBound <- mean.bounds[2]
-mean.lowerBound
-mean.upperBound
+sample.mean <- mean(means)
+sample.mean
+sample.mean.bounds <- quantile(variances, probs = c(0.025, 0.975))
+sample.mean.lowerBound <- sample.mean.bounds[1]
+sample.mean.upperBound <- sample.mean.bounds[2]
+sample.mean.lowerBound
+sample.mean.upperBound
 ```
+
+The theoretical variance is `r theoretical.mean` and the sample variance is `r sample.mean`, which means  that there is a `r (1 - (theoretical.mean / sample.mean)) * 100`% deviation.
 
 ## Theoretical variance vs. sample variance
 The theoretical standard deviation of the exponential distribution is $1 / lambda$. Since $var = sd^2$, the variance is:
@@ -60,21 +73,46 @@ theoretical.var
 The sample variance can be inferred by taking the mean from the vector of variances. Its 95% confidence interval bounds can be derived by taking the 2.5% and 97.5% values from the distribution, which are upper and lower bound, respectively.
 
 ```{r}
-variance.bounds <- quantile(variances, probs = c(0.025, 0.975))
-variance.lowerBound <- variance.bounds[1]
-variance.upperBound <- variance.bounds[2]
-variance.lowerBound
-variance.upperBound
+sample.var.mean <- mean(variances)
+sample.var.mean
+sample.var.bounds <- quantile(variances, probs = c(0.025, 0.975))
+sample.variance.lowerBound <- sample.var.bounds[1]
+sample.variance.upperBound <- sample.var.bounds[2]
+sample.variance.lowerBound
+sample.variance.upperBound
 ```
+
+The theoretical variance is `r theoretical.var` and the sample variance is `r sample.var.mean`, which means  that there is a `r (1 - (theoretical.var / sample.var.mean)) * 100`% deviation.
 
 ## Distribution
 
 The means are distributed as follows:
+
 ```{r}
-hist(means)
+qplot(means, binwidth = 0.25, fill=..count.., main = "Histogram of means") +
+    scale_fill_gradient("Count", low = "green", high = "red")
+```
+
+The Q-Q normality plot can grant us additional insight as to whether the means are normally distributed.
+
+```{r}
+qqnorm(means)
 ```
 
 Variances are distributed as depicted by the following histogram:
-```{r}
-hist(variances)
+
+```{r, echo=FALSE}
+qplot(variances, binwidth = 1, fill=..count.., main = "Histogram of variances") + scale_fill_gradient("Count", low = "green", high = "red")
 ```
+
+We can see from both the sample mean and variance histograms and Q-Q plot that the distribution is right skewed.
+
+The Shapiro-Wilk test of normality can test the means vector for a normal distribution. The null hypothesis here is that the data are normally distributed.
+
+
+```{r}
+shapiro.test(means)
+```
+
+Since p < 0.05, the test reveals the means drawn from the Exponential distribution are not normally distributed, which is not expected since the CLT would predict so. Since it is unlikely the Central Limit Theorem is false, the test could be redone using a higher number of values drawn and/or more simulations.
+
