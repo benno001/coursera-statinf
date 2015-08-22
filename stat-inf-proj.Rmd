@@ -6,9 +6,10 @@ output: pdf_document
 ---
 
 # Introduction
-In this project, I will investigate the exponential distribution in R and compare it with the Central Limit Theorem (CLT). The CLT states that iid variables should have a normal distribution, even if these variables are not normally distributed.
+In this project, I will investigate the exponential distribution in R and compare it with the Central Limit Theorem (CLT). The CLT states that iid variables should have a normal distribution, even if these variables are not normally distributed. The question that will be discussed is therefore: are means from values drawn from an Exponential distribution normally distributed?
 
 Firstly, we need to load a library for plotting:
+
 ```{r}
 library(ggplot2)
 ```
@@ -105,8 +106,6 @@ Variances are distributed as depicted by the following histogram:
 qplot(variances, binwidth = 1, fill=..count.., main = "Histogram of variances") + scale_fill_gradient("Count", low = "green", high = "red")
 ```
 
-We can see from both the sample mean and variance histograms and Q-Q plot that the distribution is right skewed.
-
 The Shapiro-Wilk test of normality can test the means vector for a normal distribution. The null hypothesis here is that the data are normally distributed.
 
 
@@ -114,5 +113,9 @@ The Shapiro-Wilk test of normality can test the means vector for a normal distri
 shapiro.test(means)
 ```
 
-Since p < 0.05, the test reveals the means drawn from the Exponential distribution are not normally distributed, which is not expected since the CLT would predict so. Since it is unlikely the Central Limit Theorem is false, the test could be redone using a higher number of values drawn and/or more simulations.
+Since p < 0.05, the test reveals the means drawn from the Exponential distribution are not normally distributed.
+
+# Discussion
+
+We can see from both the sample mean and variance histograms and Q-Q plot that the distribution is right skewed. Additionally, the Shapiro-Wilk test indicates the means are not normally distributed, which is not expected since the CLT would predict so. Since it is unlikely the Central Limit Theorem is false, the test could be redone using a higher number of values drawn and/or more simulations.
 
