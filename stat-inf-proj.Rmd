@@ -25,7 +25,7 @@ reps = 1000 # Number of iterations
 
 # Simulation code
 
-First we need to initialise two vectors for storing the means and variances, respectively. Then we can 
+First we need to initialise two vectors for storing the means and variances, respectively. Then we can simulate using a for loop.
 
 ```{r}
 means <- c() # Init vector for storing means
