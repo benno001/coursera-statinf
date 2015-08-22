@@ -53,7 +53,7 @@ The sample mean can be inferred by taking the mean from the vector of means. Its
 ```{r}
 sample.mean <- mean(means)
 sample.mean
-sample.mean.bounds <- quantile(variances, probs = c(0.025, 0.975))
+sample.mean.bounds <- quantile(means, probs = c(0.025, 0.975))
 sample.mean.lowerBound <- sample.mean.bounds[1]
 sample.mean.upperBound <- sample.mean.bounds[2]
 sample.mean.lowerBound
@@ -68,7 +68,7 @@ qplot(means, binwidth = 0.25, fill=..count.., main = "Histogram of means") +
     geom_vline(xintercept=sample.mean)
 ```
 
-The theoretical variance is `r theoretical.mean` and the sample variance is `r sample.mean`, which means  that there is a `r (1 - (theoretical.mean / sample.mean)) * 100`% deviation.
+The theoretical variance is `r theoretical.mean` and the sample variance is `r sample.mean`, which means  that there is a `r (1 - (theoretical.mean / sample.mean)) * 100`% deviation. The 95%-CI for the sample mean is `r sample.mean.lowerBound` - `r sample.mean.upperBound`.
 
 ## Theoretical variance vs. sample variance
 The theoretical standard deviation of the exponential distribution is $1 / lambda$. Since $var = sd^2$, the variance is:
@@ -99,7 +99,7 @@ qplot(variances, binwidth = 1, fill=..count.., main = "Histogram of variances") 
     geom_vline(xintercept=sample.var.mean)
 ```
 
-The theoretical variance is `r theoretical.var` and the sample variance is `r sample.var.mean`, which means  that there is a `r (1 - (theoretical.var / sample.var.mean)) * 100`% deviation.
+The theoretical variance is `r theoretical.var` and the sample variance is `r sample.var.mean`, which means  that there is a `r (1 - (theoretical.var / sample.var.mean)) * 100`% deviation. However, the variance 95%-CI sample variance bounds are far apart: (`r sample.variance.lowerBound` - `r sample.variance.upperBound`).
 
 ## Distribution
 
