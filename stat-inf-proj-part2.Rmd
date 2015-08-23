@@ -133,28 +133,32 @@ shapiro.test(ToothGrowth$len)
 When we compare the two groups we see that p > 0.05. Therefore, we cannot reject $H_0$ that there is no significant difference between the groups.
 
 ```{r}
-t.test(ToothGrowth[ToothGrowth$supp=="OJ",]$len, ToothGrowth[ToothGrowth$supp=="VC",]$len)
+t.test(ToothGrowth[ToothGrowth$supp=="OJ",]$len,
+       ToothGrowth[ToothGrowth$supp=="VC",]$len)
 ```
 
 If we split up and compare between doses, we have different results. 
 
 For a dose of 0.5 mg/day:
 ```{r}
-t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==0.5,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==0.5,]$len)
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==0.5,]$len,
+       ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==0.5,]$len)
 ```
 
 Since p < 0.05, we can reject $H_0$. This means that there is a difference between the supplement types for a dose of 0.5 mg/day.
 
 For a dose of 1 mg/day:
 ```{r}
-t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==1,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==1,]$len)
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==1,]$len,
+       ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==1,]$len)
 ```
 
 Again, p < 0.05, we can reject $H_0$. This means that there is a difference between the supplement types for a dose of 1 mg/day as well.
 
 For a dose of 2 mg/day:
 ```{r}
-t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==2,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==2,]$len)
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==2,]$len,
+       ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==2,]$len)
 ```
 Here, p > 0.05, so we cannot reject $H_0$. This means that there is no significant difference between the supplement types for a dose of 2 mg/day.
 
