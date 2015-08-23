@@ -165,4 +165,4 @@ Here, p > 0.05, so we cannot reject $H_0$. This means that there is no significa
 
 
 # Discussion
-Assuming that odontoblas length is normally distributed, the results show that there is no significant difference between different intake methods for a dose of 2 mg/day. For a dose of 0.5 or 1 mg/day, orange juice was significantly more effective than asorbic acid.
+Assuming that odontoblast length is normally distributed, the results show that there is no significant difference between different intake methods for a dose of 2 mg/day. For a dose of 0.5 or 1 mg/day, orange juice was significantly more effective than asorbic acid.
