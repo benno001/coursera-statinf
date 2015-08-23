@@ -1,0 +1,163 @@
+---
+title: "Coursera Statistical Inference Project part 2"
+author: "Ben de Haan"
+date: "22 Aug 2015"
+output: pdf_document
+---
+
+```{r echo=FALSE}
+library(ggplot2)
+```
+
+# Introduction and methods
+This report discusses the R `ToothGrowth` dataset. The dataset is composed of results on the length of odontoblasts in guinea pigs based on different doses of vitamin C intake. The guinea pigs received either 0.5, 1, or 2 mg/day of vitamin C through orange juice (OJ) or asorbic acid (VC).
+
+```{r echo=FALSE}
+str(ToothGrowth)
+```
+
+The questions that this report aims to answer are:
+* What is the 95% confidence interval for odontoblast length for each dose and intake method?
+* Is there a difference in odontoblast length between the orange juice (OJ) and asorbic acid (VC) group?
+** $H_0$ : there is no significant difference in odontoblast length between OJ and VC group
+* Is there a difference in odontoblas length between the groups for each different dose?
+** $H_0$ : there is no significant difference in odontoblast length between groups for each dose
+
+Questions will be answered using t-tests and confidence interval calculations by the T-distribution.
+
+To test the difference between groups, the T-test is used. However, this assumes lengths are normally distributed. If the data is not normally distributed, the following solutions are available: 
+1. Confidence intervals can be retrieved through bootstrapping.
+2. A log transformation of length may solve the abnormality
+
+# Exploratory Data Analysis
+
+## Summary statistics
+
+```{r echo=FALSE}
+
+group <- c("Orange juice (OJ)", "Asorbic acid (VC)", "Total")
+summary.stats <- data.frame(group)
+
+oj.mean <- mean(ToothGrowth[ToothGrowth$supp=="OJ",]$len)
+vc.mean <- mean(ToothGrowth[ToothGrowth$supp=="VC",]$len)
+tot.mean <- mean(ToothGrowth$len)
+
+means <- c(oj.mean, vc.mean, tot.mean)
+summary.stats$means <- means
+
+oj.var <- var(ToothGrowth[ToothGrowth$supp=="OJ",]$len)
+vc.var <- var(ToothGrowth[ToothGrowth$supp=="VC",]$len)
+tot.var <- var(ToothGrowth$len)
+
+oj.sd <- sd(ToothGrowth[ToothGrowth$supp=="OJ",]$len)
+vc.sd <- sd(ToothGrowth[ToothGrowth$supp=="VC",]$len)
+tot.sd <- sd(ToothGrowth$len)
+
+```
+
+Confidence intervals for the mean were retrieved as follows:
+```{r}
+# Calculte the errors
+oj.error <- qt(0.975, df = 29) * oj.sd / sqrt(30)
+vc.error <- qt(0.975, df = 29) * vc.sd / sqrt(30)
+tot.error <- qt(0.975, df = 58) * tot.sd / sqrt(60)
+
+# Calculate the confidence intervals
+oj.ci <- oj.mean + c(-1,1) * oj.error
+vc.ci <- vc.mean + c(-1,1) * vc.error
+tot.ci <- tot.mean + c(-1,1) * tot.error
+
+# Add to summary statistics table
+cis.lower <- c(oj.ci[1], vc.ci[1], tot.ci[1])
+cis.upper <- c(oj.ci[2], vc.ci[2], tot.ci[2])
+summary.stats$cis.lower <- cis.lower
+summary.stats$cis.upper <- cis.upper
+```
+
+```{r echo=FALSE}
+variances <- c(oj.var, vc.var, tot.var)
+summary.stats$variances <- variances
+
+sds <- c(oj.sd, vc.sd, tot.sd)
+summary.stats$sds <- sds
+
+names(summary.stats) <- c("Group", "Mean", "95% CI lower", "95% CI upper", "Variance", "Standard deviation")
+summary.stats
+
+```
+
+The groups are of equal size:
+```{r}
+table(ToothGrowth$supp)
+```
+
+As are the doses within groups:
+```{r}
+table(ToothGrowth[ToothGrowth$supp=="OJ",]$dose)
+table(ToothGrowth[ToothGrowth$supp=="VC",]$dose)
+```
+
+```{r echo=FALSE}
+p <- ggplot(ToothGrowth, aes(factor(supp), len))
+p + geom_boxplot(aes(fill = factor(dose))) +
+    xlab("Type of supplement") + ylab("Length") +
+    ggtitle("Figure 1: Odontoblast length by supplement and dose")
+```
+Figure 1 suggests some issues that might require further investigation: 
+* Orange juice seems to be more effective at a lower dose, but evens out at the higher doses. 
+* Higher doses seem to correspond with a higher odontoblast length
+
+
+## Normality
+Odontoblast lengths seem to be approximately normally distributed, with the mean (black line) and median (cyan) quite close together (see figure 2).
+
+```{r echo=FALSE}
+qplot(ToothGrowth$len, binwidth = 1, fill=..count.., main = "Figure 2: Histogram of odontoblast length") + 
+    scale_fill_gradient("Count", low = "green", high = "red") +
+    geom_vline(xintercept=mean(ToothGrowth$len), colour="black") +
+    geom_vline(xintercept=median(ToothGrowth$len), colour="cyan")
+```
+
+```{r echo=FALSE}
+qqnorm(ToothGrowth$len)
+```
+
+The Shapiro-Wilk test of normality reveals that we cannot reject $H_0$ that the lengths are normally distributed (p > 0.05).
+
+```{r}
+shapiro.test(ToothGrowth$len)
+```
+
+# Results
+
+When we compare the two groups we see that p > 0.05. Therefore, we cannot reject $H_0$ that there is no significant difference between the groups.
+
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp=="OJ",]$len, ToothGrowth[ToothGrowth$supp=="VC",]$len)
+```
+
+If we split up and compare between doses, we have different results. 
+
+For a dose of 0.5 mg/day:
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==0.5,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==0.5,]$len)
+```
+
+Since p < 0.05, we can reject $H_0$. This means that there is a difference between the supplement types for a dose of 0.5 mg/day.
+
+For a dose of 1 mg/day:
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==1,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==1,]$len)
+```
+
+Again, p < 0.05, we can reject $H_0$. This means that there is a difference between the supplement types for a dose of 1 mg/day as well.
+
+For a dose of 2 mg/day:
+```{r}
+t.test(ToothGrowth[ToothGrowth$supp=="OJ" & ToothGrowth$dose==2,]$len, ToothGrowth[ToothGrowth$supp=="VC" & ToothGrowth$dose==2,]$len)
+```
+Here, p > 0.05, so we cannot reject $H_0$. This means that there is no significant difference between the supplement types for a dose of 2 mg/day.
+
+
+# Discussion
+Assuming that odontoblas length is normally distributed, the results show that there is no significant difference between different intake methods for a dose of 2 mg/day. For a dose of 0.5 or 1 mg/day, orange juice was significantly more effective than asorbic acid.
