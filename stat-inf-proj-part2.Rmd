@@ -103,6 +103,7 @@ p + geom_boxplot(aes(fill = factor(dose))) +
     xlab("Type of supplement") + ylab("Length") +
     ggtitle("Figure 1: Odontoblast length by supplement and dose")
 ```
+
 Figure 1 suggests some issues that might require further investigation: 
 * Orange juice seems to be more effective at a lower dose, but evens out at the higher doses. 
 * Higher doses seem to correspond with a higher odontoblast length
